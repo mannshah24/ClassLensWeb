@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ApiServices } from '../../api/api';
-import { User, Mail, ShieldAlert, Award, Calendar, Bookmark, LogOut, CheckCircle, AlertTriangle } from 'lucide-react';
+import { User, Mail, ShieldAlert, Award, Calendar, Bookmark, LogOut, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function StudentProfile() {
@@ -66,10 +66,13 @@ export default function StudentProfile() {
     year,
     department_name,
     semester,
-    overall_attendance
+    overall_attendance,
+    subjects = []
   } = profile;
 
   const attendancePct = Math.round(overall_attendance || 0);
+  const totalAttended = (subjects || []).reduce((sum, sub) => sum + (sub.attended || 0), 0);
+  const totalClasses = (subjects || []).reduce((sum, sub) => sum + (sub.total || 0), 0);
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '600px', margin: '0 auto' }}>
@@ -156,25 +159,25 @@ export default function StudentProfile() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '20px 24px',
-        borderLeft: `5px solid ${attendancePct >= 75 ? 'var(--color-success)' : 'var(--color-danger)'}`
+        borderLeft: '5px solid var(--color-student)'
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
             Attendance Status
           </span>
           <h4 style={{ fontSize: '1.1rem', fontWeight: '700' }}>
-            {attendancePct >= 75 ? 'Examinations Eligible' : 'Shortage Detected'}
+            Overall: {attendancePct}%
           </h4>
           <span style={{ 
             fontSize: '0.78rem', 
-            color: attendancePct >= 75 ? 'var(--color-success-text)' : 'var(--color-danger-text)',
+            color: 'var(--color-text-secondary)',
             fontWeight: '600',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '4px'
           }}>
-            {attendancePct >= 75 ? <CheckCircle size={12} /> : <AlertTriangle size={12} />}
-            Current: {attendancePct}% (Min 75% required)
+            <CheckCircle size={12} style={{ color: 'var(--color-student)' }} />
+            Attended {totalAttended} of {totalClasses} classes
           </span>
         </div>
         
@@ -182,8 +185,8 @@ export default function StudentProfile() {
           width: '56px',
           height: '56px',
           borderRadius: '50%',
-          backgroundColor: attendancePct >= 75 ? 'var(--color-success-light)' : 'var(--color-danger-light)',
-          color: attendancePct >= 75 ? 'var(--color-success)' : 'var(--color-danger)',
+          backgroundColor: 'var(--color-student-light)',
+          color: 'var(--color-student)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ApiServices } from '../../api/api';
-import { BookOpen, User, Calendar, Award, CheckCircle, AlertTriangle, ArrowUpRight } from 'lucide-react';
+import { BookOpen, User, Calendar, Award, AlertTriangle, ArrowUpRight } from 'lucide-react';
 
 export default function StudentDashboard() {
   const { user } = useAuth();
@@ -76,6 +76,9 @@ export default function StudentDashboard() {
   const roundedOverall = overall_attendance !== null && overall_attendance !== undefined 
     ? Math.round(overall_attendance) 
     : 0;
+
+  const totalAttended = (subjects || []).reduce((sum, sub) => sum + (sub.attended || 0), 0);
+  const totalClasses = (subjects || []).reduce((sum, sub) => sum + (sub.total || 0), 0);
 
   // Render color based on threshold (75% for default university rule)
   const getAttendanceColor = (pct) => {
@@ -155,18 +158,14 @@ export default function StudentDashboard() {
               Overall Attendance
             </span>
             <h3 style={{ fontSize: '1.4rem', fontWeight: '800' }}>
-              {roundedOverall >= 75 ? 'Safe Standing' : 'Below Threshold'}
+              {totalAttended} / {totalClasses} Classes
             </h3>
             <span style={{ 
               fontSize: '0.8rem', 
-              color: getAttendanceColor(roundedOverall),
-              fontWeight: '600',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px'
+              color: 'var(--color-text-secondary)',
+              fontWeight: '600'
             }}>
-              {roundedOverall >= 75 ? <CheckCircle size={12} /> : <AlertTriangle size={12} />}
-              Requires min 75% for examinations
+              Attended across all courses
             </span>
           </div>
         </div>
