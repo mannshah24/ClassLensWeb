@@ -1,7 +1,7 @@
 // API client service replicating ApiServices from the mobile application.
 // Connects to the same backend Django endpoints.
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://172.26.12.236:8000/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 /**
  * Extracts error message from response body.
